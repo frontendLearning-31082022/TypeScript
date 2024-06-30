@@ -42,7 +42,7 @@ p.name {
     font-weight: 400;
     font-size: 12px;
     line-height: 12px;
-    color: #4F4F4F;    
+    color: #4F4F4F;
     display: flex;
     align-items: center;
 }
@@ -122,7 +122,7 @@ button {
 }
 .results {
     margin-top: 20px;
-} 
+}
 .search-results-header {
     display: flex;
     flex-direction: row;
@@ -144,7 +144,7 @@ button {
 .search-results-filter span {
     border-bottom: 1px dashed #828282;
     margin-right: 4px;
-} 
+}
 .search-results-filter select {
     width: 180px;
 }
@@ -326,5 +326,5 @@ span.forward {
     border-bottom: 5px solid #D30000;
 }
 .info-block p {
-    margin-bottom: 16px;    
+    margin-bottom: 16px;
 }
