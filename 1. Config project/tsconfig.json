@@ -4,7 +4,6 @@
     "module": "es2015",
     "moduleResolution": "node",
     "allowJs": true,
-    "sourceMap": true,
     "outDir": "./public/build",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
