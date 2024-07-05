@@ -7,13 +7,12 @@ export function renderSearchFormBlock() {
     let maxDate: Date = new Date();
     maxDate.setMonth(maxDate.getMonth() + 1);
     maxDate = new Date(new Date(maxDate.getTime()).getFullYear(), new Date(maxDate.getTime()).getMonth() + 1, 0);
-    const maxDate_out: Date = new Date(new Date(maxDate.getTime()).setDate(new Date(maxDate.getTime()).getDate() + 2));
 
-    const tomorrow: any = new Date(new Date().setDate(new Date().getDate() + 1));
-    const tomorrow_plus2: any = new Date(new Date().setDate(new Date().getDate() + 3));
+    const tomorrow: Date = new Date(new Date().setDate(new Date().getDate() + 1));
+    const tomorrow_plus2: Date = new Date(new Date().setDate(new Date().getDate() + 3));
 
     function dateToStr(date: Date) {
-        return date.toLocaleDateString("fr-CA");
+        return date.toLocaleDateString('fr-CA');
     }
 
     const reCalc_out = document.createElement('script');

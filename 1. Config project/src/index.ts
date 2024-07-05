@@ -27,7 +27,7 @@ if (recommendedBook instanceof Book) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    renderUserBlock("Ирина","/img/avatar.png",0)
+    renderUserBlock('Ирина','/img/avatar.png',0)
     renderSearchFormBlock()
     renderSearchStubBlock()
     renderToast(
