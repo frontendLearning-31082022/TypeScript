@@ -1,10 +1,15 @@
 export function renderBlock (elementId, html) {
   const element = document.getElementById(elementId)
   element?.innerHTML = html
+export function renderBlock(elementId: string, html: string) {
+    const element: HTMLElement | null = document.getElementById(elementId)
+    if(element)element.innerHTML = html
 }
 
 export function renderToast (message, action) {
   let messageText = ''
+export function renderToast(message: { text: string, type: 'success' | 'error' } | null,
+    action?: { name: string, handler: () => void }) {
 
   if (message != null) {
     messageText = `

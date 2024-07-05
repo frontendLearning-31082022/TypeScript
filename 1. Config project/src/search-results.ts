@@ -16,6 +16,7 @@ export function renderEmptyOrErrorSearchBlock (reasonMessage) {
   renderBlock(
     'search-results-block',
     `
+export function renderEmptyOrErrorSearchBlock(reasonMessage: string) {
     <div class="no-results-block">
       <img src="img/no-results.png" />
       <p>${reasonMessage}</p>

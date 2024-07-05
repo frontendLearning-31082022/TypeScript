@@ -10,6 +10,7 @@ function findSuitableBook (genre: string, pagesLimit: number, multipleRecommenda
   const findAlgorithm = (book: Book) => {
     return book.genre === genre && book.pagesAmount <= pagesLimit
   }
+function findSuitableBook(genre: string, pagesLimit: number, multipleRecommendations = true): Book | Book[] | undefined {
 
   if (multipleRecommendations) {
     return books.filter(findAlgorithm)
@@ -24,6 +25,11 @@ if (recommendedBook instanceof Book) {
   console.log(recommendedBook.name)
 } else {
   console.log(recommendedBook[0].name)
+    console.log(recommendedBook.name)
+} if (Array.isArray(recommendedBook)) {
+    console.log(recommendedBook[0].name)
+} if (recommendedBook === undefined) {
+    console.log('no_reconended book');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
