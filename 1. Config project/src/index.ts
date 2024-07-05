@@ -2,7 +2,7 @@ import { Book } from './book.js'
 import { books } from './book-collection.js'
 import { renderSearchFormBlock } from './search-form.js'
 import { renderSearchStubBlock } from './search-results.js'
-import { renderUserBlock } from './user.js'
+import { renderCurrentUser } from './user.js'
 import { renderToast } from './lib.js'
 
 
@@ -29,7 +29,7 @@ if (recommendedBook instanceof Book) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    renderUserBlock('Ирина', '/img/avatar.png', 0)
+    renderCurrentUser()
     renderSearchFormBlock()
     renderSearchStubBlock()
     renderToast(
