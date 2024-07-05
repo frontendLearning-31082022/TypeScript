@@ -86,11 +86,17 @@ function handleSearchForm(form: HTMLFormElement): void {
         date_checkout: new Date(formData['Дата выезда']), max_price_per_day: formData['Макс. цена суток']
     };
 
-    search(params);
+    const handleSearchResult = (one: Error | Place[]) => { console.log(one) }
+    search(params, handleSearchResult);
 }
 
-function search(params: SearchFormData): void {
-    console.log(params);
+function search(params: SearchFormData, handleSearchResult: (error: (Error | Place[])) =>
+    void): void {
+    setTimeout(() => {
+        const rnd_bool = Math.random() < 0.5;
+        const res = rnd_bool ? new Error('search error') : [] as Place[];
+        handleSearchResult(res);
+    }, 4000)
 }
 
 
