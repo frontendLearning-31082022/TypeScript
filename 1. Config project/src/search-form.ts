@@ -15,6 +15,9 @@ export function renderSearchFormBlock() {
         return date.toLocaleDateString('fr-CA');
     }
 
+    // @ts-expect-error "global window. set var"
+    window['searchForm_search'] = handleSearchForm;
+
     const reCalc_out = document.createElement('script');
     reCalc_out.innerHTML = `
             function reCalc_out(e){
@@ -30,7 +33,7 @@ export function renderSearchFormBlock() {
     renderBlock(
         'search-form-block',
         `
-    <form>
+    <form onsubmit="searchForm_search(this); return false;">
       <fieldset class="search-filedset">
         <div class="row">
           <div>
@@ -54,7 +57,7 @@ export function renderSearchFormBlock() {
           </div>
           <div>
             <label for="max-price">Макс. цена суток</label>
-            <input id="max-price" type="text" value="" name="price" class="max-price" />
+            <input id="max-price" type="number" value="" name="price" class="max-price" />
           </div>
           <div>
             <div><button>Найти</button></div>
@@ -64,4 +67,36 @@ export function renderSearchFormBlock() {
     </form>
     `
     )
+}
+
+function handleSearchForm(form: HTMLFormElement): void {
+    type formFields = { 'Город': string, 'Дата заезда': string, 'Дата выезда': string, 'Макс. цена суток': number };
+    type P = keyof formFields;
+
+    const inputs = ([...form] as HTMLInputElement[]).filter(x => x.tagName == 'INPUT' && x.type != 'hidden');
+    const formData: formFields = {} as formFields;
+    inputs.filter(x => x.tagName == 'INPUT').forEach(x => {
+        const field: P = (x.labels![0].textContent! as P);
+        // @ts-expect-error "wtf"
+        formData[field] = x.value;
+    });
+
+    const params: SearchFormData = {
+        city: formData.Город, date_checkin: new Date(formData['Дата заезда']),
+        date_checkout: new Date(formData['Дата выезда']), max_price_per_day: formData['Макс. цена суток']
+    };
+
+    search(params);
+}
+
+function search(params: SearchFormData): void {
+    console.log(params);
+}
+
+
+interface SearchFormData {
+    city: string,
+    date_checkin: Date,
+    date_checkout: Date,
+    max_price_per_day: number
 }
