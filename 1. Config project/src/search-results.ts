@@ -1,5 +1,6 @@
 import { renderBlock } from './lib.js'
 import { Place } from './places.js'
+import { addToFavorite, getFavoritesList } from './user.js'
 
 export function renderSearchStubBlock() {
     renderBlock(
@@ -25,7 +26,13 @@ export function renderEmptyOrErrorSearchBlock(reasonMessage: string) {
     )
 }
 
+// const scriptsInclude = `import "./build/src/user.js";`;
+
+
 export function renderSearchResultsBlock(places: Place[]) {
+
+    window['addToFavorite'] = addToFavorite;
+    const favoriteUserList = getFavoritesList();
 
     let placesRender = '';
     places.forEach(place => {
@@ -33,7 +40,7 @@ export function renderSearchResultsBlock(places: Place[]) {
         <li class="result">
           <div class="result-container">
             <div class="result-img-container">
-              <div class="favorites active"></div>
+              <div class="favorites ${favoriteUserList.has(place.id) ? ' active' : ''}" onclick='addToFavorite(event.target, ${JSON.stringify(place)})'></div>
               <img class="result-img" src="${place.image}" alt="">
             </div>
             <div class="result-info">
@@ -72,7 +79,6 @@ export function renderSearchResultsBlock(places: Place[]) {
     </div>
     ${placesRender}
     `
+    );
 
-
-    )
 }
