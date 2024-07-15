@@ -9,5 +9,8 @@
         "strict": true,
         "skipLibCheck": true,
         "sourceMap": true
-    }
+    },
+    "exclude": [
+        "./api_realestate/*"
+    ]
 }

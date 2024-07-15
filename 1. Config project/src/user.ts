@@ -72,10 +72,11 @@ export function addToFavorite(like_element: HTMLElement, element: LocalStorage_l
 }
 
 export function getFavoritesList(): Map<number, LocalStorage_liked_booking> {
-    let elems: LocalStorage_liked_booking[] | 'null' = JSON.parse(localStorage.getItem(localstore_favorite_key));
-    if (elems === 'null' || elems === null) elems = [];
-    elems = elems.map(x => JSON.parse(x));
+    const strFavKey: (string | null) = localStorage.getItem(localstore_favorite_key);
+    if (strFavKey == null) return new Map();
 
+    let elems: LocalStorage_liked_booking[] | 'null' = JSON.parse(strFavKey);
+    if (elems === 'null' || elems === null) elems = [];
 
     const mapFavorites: Map<number, LocalStorage_liked_booking> = new Map();
     elems.forEach(x => mapFavorites.set(x.id, x));
@@ -84,6 +85,7 @@ export function getFavoritesList(): Map<number, LocalStorage_liked_booking> {
 
 function updateFavoritesAmount(count: number) {
     if (count != undefined) {
-        document.getElementById('likes_count')?.textContent = count.toString();
+        if(!document.getElementById('likes_count'))return;
+        document.getElementById('likes_count')!.textContent = count.toString();
     }
 }

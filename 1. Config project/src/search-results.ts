@@ -86,8 +86,13 @@ export function renderSearchResultsBlock(places: Place[]) {
 
 function invalidDataTimer() {
     const time = 5 * 60000;
-    setTimeout(() => { [...document.getElementsByClassName('reserve_btn')].forEach(x => {x.disabled=true; x.setAttribute('onclick',''); x.textContent='Недоступно'; });
-    renderToast({ text: 'Данные неактуальны, обновите страницу.', type: 'error' });}, time);
+    setTimeout(() => {
+        [...document.getElementsByClassName('reserve_btn')].forEach(x => {
+            (x as HTMLButtonElement).disabled = true;
+            x.setAttribute('onclick', ''); x.textContent = 'Недоступно';
+        });
+        renderToast({ text: 'Данные неактуальны, обновите страницу.', type: 'error' });
+    }, time);
 }
 
 function handleBook(placeId: number) {

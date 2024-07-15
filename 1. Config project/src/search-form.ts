@@ -21,7 +21,6 @@ export function renderSearchFormBlock() {
         return date.toLocaleDateString('fr-CA');
     }
 
-    // @ts-expect-error "global window. set var"
     window['searchForm_search'] = handleSearchForm;
 
     const reCalc_out = document.createElement('script');
