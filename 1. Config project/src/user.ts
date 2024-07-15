@@ -1,5 +1,4 @@
 import { renderBlock } from './lib.js'
-import { Place } from './places.js';
 import { localStorage_user as UserRecord, localStorage_favoritesAmount as FavoritesRecord, localStorage_liked_booking as LikesStore } from './types.js';
 
 export function renderUserBlock(userName: string, avatarLink: string | undefined, favoriteItemsAmount: number | undefined): void {
@@ -14,7 +13,7 @@ export function renderUserBlock(userName: string, avatarLink: string | undefined
       <div class="info">
           <p class="name">${userName}</p>
           <p class="fav">
-            <i class="heart-icon${hasFavoriteItems ? ' active' : ''}"></i>${favoritesCaption}
+            <i class="heart-icon${hasFavoriteItems ? ' active' : ''}"></i><span id="likes_count">${favoritesCaption}</span>
           </p>
       </div>
     </div>
@@ -54,12 +53,8 @@ const localstore_favorite_key = 'favoriteItems';
 export function addToFavorite(like_element: HTMLElement, element: LikesStore) {
     const current: LikesStore = ({ id: element.id, name: element.name, image: element.image });
 
-    // let elems: LikesStore[] | 'null' = JSON.parse(localStorage.getItem(localstore_favorite_key));
-    // if (elems === 'null') elems = [];
-
     const favoriteUserList = getFavoritesList();
 
-    // const already = elems.filter(x => x.id == element.id);
     const stateLike = !favoriteUserList.has(current.id);
     if (stateLike) {
         like_element.classList.add('active');
@@ -69,8 +64,10 @@ export function addToFavorite(like_element: HTMLElement, element: LikesStore) {
         favoriteUserList.delete(current.id);
     }
 
+    const countObj: FavoritesRecord = { count: [...favoriteUserList.values()].length };
+    localStorage.setItem('favoritesAmount', JSON.stringify(countObj));
+    updateFavoritesAmount(countObj.count);
 
-    // favoriteUserList.values
     const json = JSON.stringify([...favoriteUserList.values()].map(x => JSON.stringify(x)));
     localStorage.setItem(localstore_favorite_key, json);
 }
@@ -82,7 +79,12 @@ export function getFavoritesList(): Map<number, LikesStore> {
 
 
     const mapFavorites: Map<number, LikesStore> = new Map();
-    //  {} as Map<number, LikesStore>;
     elems.forEach(x => mapFavorites.set(x.id, x));
     return mapFavorites;
+}
+
+function updateFavoritesAmount(count: number) {
+    if (count != undefined) {
+        document.getElementById('likes_count')?.textContent = count.toString();
+    }
 }

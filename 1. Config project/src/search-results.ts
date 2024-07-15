@@ -26,9 +26,6 @@ export function renderEmptyOrErrorSearchBlock(reasonMessage: string) {
     )
 }
 
-// const scriptsInclude = `import "./build/src/user.js";`;
-
-
 export function renderSearchResultsBlock(places: Place[]) {
 
     window['addToFavorite'] = addToFavorite;
