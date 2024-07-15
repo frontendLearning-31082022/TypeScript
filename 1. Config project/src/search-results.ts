@@ -1,6 +1,8 @@
-import { renderBlock } from './lib.js'
+import { renderBlock, renderToast } from './lib.js'
 import { Place } from './places.js'
 import { addToFavorite, getFavoritesList } from './user.js'
+import { dateToUnixStamp } from './dates-methods.js'
+import { searchBook_formIds } from './types.js'
 
 export function renderSearchStubBlock() {
     renderBlock(
@@ -29,6 +31,7 @@ export function renderEmptyOrErrorSearchBlock(reasonMessage: string) {
 export function renderSearchResultsBlock(places: Place[]) {
 
     window['addToFavorite'] = addToFavorite;
+    window['handleBook'] = handleBook;
     const favoriteUserList = getFavoritesList();
 
     let placesRender = '';
@@ -49,7 +52,7 @@ export function renderSearchResultsBlock(places: Place[]) {
               <div class="result-info--descr">${place.description}</div>
               <div class="result-info--footer">
                 <div>
-                  <button>Забронировать</button>
+                  <button onclick="handleBook(${place.id})">Забронировать</button>
                 </div>
               </div>
             </div>
@@ -77,5 +80,28 @@ export function renderSearchResultsBlock(places: Place[]) {
     ${placesRender}
     `
     );
+
+}
+
+function handleBook(placeId: number) {
+    const date_checkin = new Date((document.getElementById(searchBook_formIds.date_checkin) as HTMLInputElement).value);
+    const date_checkout = new Date((document.getElementById(searchBook_formIds.date_checkout) as HTMLInputElement).value);
+    book(placeId, date_checkin, date_checkout);
+}
+
+function book(placeId: number, checkInDate: Date, checkOutDate: Date) {
+    const url = `http://localhost:3030/places/${placeId}?` +
+        `checkInDate=${dateToUnixStamp(checkInDate)}&` +
+        `checkOutDate=${dateToUnixStamp(checkOutDate)}&`;
+
+    fetch(url, {
+        method: 'PATCH',
+    }).then(x => {
+        if (!x.ok) throw new Error(x.statusText);
+        renderToast({ text: 'Место успешно забронировано', type: 'success' });
+    }).catch(x => {
+        console.log(x);
+        renderToast({ text: 'Невозможно забронировать место', type: 'error' });
+    });
 
 }
