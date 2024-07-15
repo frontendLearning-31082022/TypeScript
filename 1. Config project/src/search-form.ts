@@ -4,7 +4,7 @@ import env from './env.js'
 import { Place } from './places.js'
 import { renderSearchResultsBlock } from './search-results.js'
 import { dateToUnixStamp } from './dates-methods.js'
-import { searchBook_formIds } from './types.js'
+import { SearchBook_formIds } from './enums.js'
 
 export function renderSearchFormBlock() {
     const minDate: Date = new Date();
@@ -30,8 +30,8 @@ export function renderSearchFormBlock() {
             function reCalc_out(e){
                 choosedDate=new Date( Date.parse(e.value));
                 const minIncrement = new Date(choosedDate.setDate(choosedDate.getDate() + 2));
-                document.getElementById('${searchBook_formIds.date_checkout}').min=minIncrement.toLocaleDateString("fr-CA")
-                document.getElementById('${searchBook_formIds.date_checkout}').value=minIncrement.toLocaleDateString("fr-CA")
+                document.getElementById('${SearchBook_formIds.date_checkin}').min=minIncrement.toLocaleDateString("fr-CA")
+                document.getElementById('${SearchBook_formIds.date_checkout}').value=minIncrement.toLocaleDateString("fr-CA")
             }
        `;
     document.body.appendChild(reCalc_out);
@@ -54,12 +54,12 @@ export function renderSearchFormBlock() {
         </div>
         <div class="row">
           <div>
-            <label for="${searchBook_formIds.date_checkin}">Дата заезда</label>
-            <input id="${searchBook_formIds.date_checkin}" type="date" onchange="reCalc_out(this)" value="${dateToStr(tomorrow)}" min="${dateToStr(minDate)}" max="${dateToStr(maxDate)}" name="checkin" />
+            <label for="${SearchBook_formIds.date_checkin}">Дата заезда</label>
+            <input id="${SearchBook_formIds.date_checkin}" type="date" onchange="reCalc_out(this)" value="${dateToStr(tomorrow)}" min="${dateToStr(minDate)}" max="${dateToStr(maxDate)}" name="checkin" />
           </div>
           <div>
-            <label for="${searchBook_formIds.date_checkout}">Дата выезда</label>
-            <input id="${searchBook_formIds.date_checkout}" type="date" value="${dateToStr(tomorrow_plus2)}" min="${dateToStr(minDate_out)}" name="checkout" />
+            <label for="${SearchBook_formIds.date_checkout}">Дата выезда</label>
+            <input id="${SearchBook_formIds.date_checkout}" type="date" value="${dateToStr(tomorrow_plus2)}" min="${dateToStr(minDate_out)}" name="checkout" />
           </div>
           <div>
             <label for="max-price">Макс. цена суток</label>

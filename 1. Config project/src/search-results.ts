@@ -2,7 +2,7 @@ import { renderBlock, renderToast } from './lib.js'
 import { Place } from './places.js'
 import { addToFavorite, getFavoritesList } from './user.js'
 import { dateToUnixStamp } from './dates-methods.js'
-import { searchBook_formIds } from './types.js'
+import { SearchBook_formIds } from './enums.js'
 
 export function renderSearchStubBlock() {
     renderBlock(
@@ -84,8 +84,8 @@ export function renderSearchResultsBlock(places: Place[]) {
 }
 
 function handleBook(placeId: number) {
-    const date_checkin = new Date((document.getElementById(searchBook_formIds.date_checkin) as HTMLInputElement).value);
-    const date_checkout = new Date((document.getElementById(searchBook_formIds.date_checkout) as HTMLInputElement).value);
+    const date_checkin = new Date((document.getElementById(SearchBook_formIds.date_checkin) as HTMLInputElement).value);
+    const date_checkout = new Date((document.getElementById(SearchBook_formIds.date_checkout) as HTMLInputElement).value);
     book(placeId, date_checkin, date_checkout);
 }
 
