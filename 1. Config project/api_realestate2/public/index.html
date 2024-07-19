@@ -1,0 +1,94 @@
+<script type="module">
+    import {FlatRentSdk, addDays, cloneDate} from '/scripts/flat-rent-sdk.js'
+
+    const sdk = new FlatRentSdk()
+    const today = new Date()
+
+    sdk.get('mvm32l')
+    .then((flat) => {
+        console.log('flat by id', flat)
+    })
+
+    sdk.search({city: 'Самара'})
+        .catch((result) => {
+            console.error('serach incorrect city', result)
+        })
+
+    sdk.search({city: 'Санкт-Петербург'})
+        .catch((result) => {
+            console.error('serach without dates', result)
+        })
+
+    sdk.search({
+        city: 'Санкт-Петербург',
+        checkInDate: new Date(2021, 6, 26)
+    })
+        .catch((result) => {
+            console.error('serach with only check-in date', result)
+        })
+
+    sdk.search({
+        city: 'Санкт-Петербург',
+        checkInDate: addDays(cloneDate(today), -1),
+        checkOutDate: addDays(cloneDate(today), -6)
+    })
+        .catch((result) => {
+            console.error('serach with check-in in the past', result)
+        })
+
+    sdk.search({
+        city: 'Санкт-Петербург',
+        checkInDate: cloneDate(today),
+        checkOutDate: addDays(cloneDate(today), -6)
+    })
+        .catch((result) => {
+            console.error('serach with check-out date less than check-in', result)
+        })
+
+    sdk.search({
+        city: 'Санкт-Петербург',
+        checkInDate: cloneDate(today),
+        checkOutDate: addDays(cloneDate(today), 1)
+    })
+        .then((result) => {
+            console.log('serach for one night', result)
+        })
+
+    sdk.search({
+        city: 'Санкт-Петербург',
+        checkInDate: cloneDate(today),
+        checkOutDate: addDays(cloneDate(today), 2)
+    })
+        .then((result) => {
+            console.log('serach for two nights', result)
+        })
+
+    sdk.search({
+        city: 'Санкт-Петербург',
+        checkInDate: cloneDate(today),
+        checkOutDate: addDays(cloneDate(today), 1),
+        priceLimit: 4500
+    })
+        .then((result) => {
+            console.log('serach with price limit', result)
+        })
+
+    sdk.book('ab2e2', cloneDate(today), addDays(cloneDate(today), 2))
+        .then((result) => {
+            console.log('book flat', result)
+
+            sdk.search({
+                city: 'Санкт-Петербург',
+                checkInDate: cloneDate(today),
+                checkOutDate: addDays(cloneDate(today), 3)
+            })
+                .then((result) => {
+                    console.log('serach after booking', result, result.length)
+                })
+        })
+
+    sdk.book('vnd331', addDays(cloneDate(today), 5), addDays(cloneDate(today), 6))
+    .then((result) => {
+            console.log('book flat', result)
+    })
+</script>
