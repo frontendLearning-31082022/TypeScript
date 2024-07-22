@@ -1,11 +1,22 @@
 {
-  "name": "geekbrains-flat-rent-sdk",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "start": "http-server -p 3040"
-  },
-  "dependencies": {
-    "http-server": "^0.12.3"
-  }
+    "name": "geekbrains-flat-rent-sdk",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+       "watch_folder": "copy-and-watch --watch --skip-initial-copy \"public/**\" \"dist/public/\" ",
+       "build_watch":"concurrently --kill-others \"tsc --watch\" \"npm run watch_folder\"",
+        "start": "concurrently --kill-others \"npm run build_watch\" \"nodemon ./dist/index.js --watch\""
+    },
+    "dependencies": {
+        "@feathersjs/express": "^4.5.11",
+        "@feathersjs/feathers": "^4.5.11",
+        "@feathersjs/transport-commons": "^4.5.11",
+        "joi": "^17.4.0"
+    },
+    "devDependencies": {
+        "@types/node": "^15.12.2",
+        "nodemon": "^2.0.22",
+        "typescript": "^5.5.3",
+        "copy-and-watch": "latest"
+    }
 }

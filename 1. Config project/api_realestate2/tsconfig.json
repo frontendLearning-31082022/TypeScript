@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "allowJs": true,
+        "outDir": "./dist/",
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "sourceMap": true
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
