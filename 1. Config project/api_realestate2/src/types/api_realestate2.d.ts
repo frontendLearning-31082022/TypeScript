@@ -12,7 +12,7 @@ interface FilterPayload {
     coordinates: string;
     checkInDate: Date;
     checkOutDate: Date;
-    maxPrice: number;
+    maxPrice: number | null;
 }
 
 interface Filter {

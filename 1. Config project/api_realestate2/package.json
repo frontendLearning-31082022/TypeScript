@@ -3,9 +3,10 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-       "watch_folder": "copy-and-watch --watch --skip-initial-copy \"public/**\" \"dist/public/\" ",
-       "build_watch":"concurrently --kill-others \"tsc --watch\" \"npm run watch_folder\"",
-        "start": "concurrently --kill-others \"npm run build_watch\" \"nodemon ./dist/index.js --watch\""
+        "watch_folder": "copy-and-watch --watch --skip-initial-copy \"public/**\" \"dist/public/\" ",
+        "build_watch": "concurrently --kill-others \"tsc --watch\" \"npm run watch_folder\"",
+        "start": "concurrently --kill-others \"npm run build_watch\" \"nodemon ./dist/index.js --watch\"",
+        "test": "jest"
     },
     "dependencies": {
         "@feathersjs/express": "^4.5.11",
@@ -14,9 +15,13 @@
         "joi": "^17.4.0"
     },
     "devDependencies": {
+        "@types/jest": "^29.5.12",
         "@types/node": "^15.12.2",
+        "copy-and-watch": "latest",
+        "jest": "^29.7.0",
+        "node-fetch": "^3.3.2",
         "nodemon": "^2.0.22",
-        "typescript": "^5.5.3",
-        "copy-and-watch": "latest"
+        "ts-jest": "^29.2.3",
+        "typescript": "^5.5.3"
     }
 }

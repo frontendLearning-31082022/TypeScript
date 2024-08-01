@@ -1,6 +1,6 @@
 /// <reference types="./types/api_realestate2.d.ts" />
 
-import { NullableId, Params } from '@feathersjs/feathers';
+import { Params } from '@feathersjs/feathers';
 import { BadRequest, NotFound } from '@feathersjs/errors';
 import { DateHelper } from './helpers/DateHelper';
 import { Booking } from './repositories/Booking';
@@ -9,14 +9,9 @@ import Joi = require('joi');
 export class PlaceRestController {
     constructor(private placeRepository: FlatRentSdk) { }
 
-    public async get(id: NullableId, params?: Params): Promise<Flat | null> {
-        const numericId = Number(id);
-        if (!isFinite(numericId) || numericId <= 0) {
-            throw new BadRequest();
-        }
-
+    public async get(id: string, params?: Params): Promise<Flat | null> {
         const coordinates: string = params?.query?.coordinates || '';
-        const place = await this.placeRepository.get(numericId.toString());
+        const place = await this.placeRepository.get(id);
 
         if (place != null && coordinates === '') {
             place.remoteness = 0;
@@ -34,7 +29,7 @@ export class PlaceRestController {
                 .required(),
             checkInDate: Joi.date().timestamp('unix').min(minDate).required(),
             checkOutDate: Joi.date().timestamp('unix').greater(Joi.ref('checkInDate')).required(),
-            maxPrice: Joi.number().min(1).default(0)
+            maxPrice: Joi.number().min(1).default(null)
         });
         const validationResult = filterSchema.validate(query);
 
@@ -46,17 +41,15 @@ export class PlaceRestController {
         // const coordinatesArray = validatedParams.coordinates.split(',');
 
         //TODO stub city
-        const parameters = { city: 'Санкт-Петербург', checkInDate: validatedParams.checkInDate, checkOutDate: validatedParams.checkOutDate, priceLimit: validatedParams.maxPrice };
+        const parameters = {
+            city: 'Санкт-Петербург', checkInDate: validatedParams.checkInDate,
+            checkOutDate: validatedParams.checkOutDate, priceLimit: validatedParams.maxPrice
+        };
 
         return await this.placeRepository.search(parameters);
     }
 
-    public async patch(id: NullableId, data: Partial<Place>, params?: Params): Promise<Number> {
-        const numericId = Number(id);
-        if (!isFinite(numericId) || numericId <= 0) {
-            throw new BadRequest('Place ID is not correct.');
-        }
-
+    public async patch(id: string, data: Partial<Place>, params?: Params): Promise<number> {
         const placeToBook = await this.get(id);
         if (placeToBook == null) {
             throw new NotFound('Place not found.');
@@ -78,8 +71,6 @@ export class PlaceRestController {
         const booking: Booking = validatedParams;
         const dateToBook = DateHelper.generateDateRange(booking.checkInDate, booking.checkOutDate);
 
-        return await this.placeRepository.book(
-            { flatId: numericId, checkInDate: dateToBook[0], checkOutDate: dateToBook[1] }
-        );
+        return await this.placeRepository.book(id, dateToBook[0], dateToBook[1]);
     }
 }

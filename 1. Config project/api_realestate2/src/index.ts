@@ -1,6 +1,7 @@
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import { PlaceRestController } from './PlaceRestController';
+import { FlatRentSdkStandalone } from './flat-rent-sdk_standalone';
 
 /// <reference types="./types/api_realestate2.d.ts" />
 
@@ -19,8 +20,7 @@ async function runApp() {
     app.configure(express.rest());
     app.use(express.errorHandler());
 
-    app.use('/places', new PlaceRestController(new FlatRentSdk()));
-
+    app.use('/places', new PlaceRestController(new FlatRentSdkStandalone()));
 
     app.listen(appPort).on('listening', () => {
         console.log(`Server started ${appPort}`);

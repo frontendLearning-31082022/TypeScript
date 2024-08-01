@@ -1,7 +1,7 @@
 declare class FlatRentSdk {
     get(id: string): Promise<Flat | null>;
-    search(parameters: { city: string, checkInDate: Date, checkOutDate: Date, priceLimit: number }): Flat[];
-    book(parameters:{ flatId: number, checkInDate: Date, checkOutDate: Date}): number;
+    search(parameters: { city: string, checkInDate: Date, checkOutDate: Date, priceLimit: number | null }): Flat[];
+    book(flatId: string, checkInDate: Date, checkOutDate: Date): number;
 }
 
 type Flat = {
@@ -14,4 +14,3 @@ type Flat = {
     price: number,
     remoteness: number
 }
-// type SearchParams={ city: string, checkInDate: Date, checkOutDate: Date, priceLimit: number };
