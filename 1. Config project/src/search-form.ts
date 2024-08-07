@@ -64,9 +64,20 @@ export function renderSearchFormBlock() {
           <div>
             <label for="max-price">Макс. цена суток</label>
             <input id="max-price" type="number" value="" name="price" class="max-price" />
-          </div>
+          </div
+
           <div>
-            <div><button>Найти</button></div>
+          <div class="provider_filter">
+            <span> Поставщик:</span>
+            <select id="provider_select">
+                <option selected>все</option>
+                ${providerSearchingConfs({ city: '', date_checkin: new Date(), date_checkout: new Date(), max_price_per_day: 0 })
+            .map(x => '<option>' + x.name + '</option>').join('\r\n')}
+            </select>
+          </div>
+            </div>
+          <div id="find_btn">
+            <button >Найти</button>
           </div>
         </div>
       </fieldset>
@@ -87,16 +98,23 @@ function handleSearchForm(form: HTMLFormElement): void {
         formData[field] = x.value;
     });
 
+    let provider = [...form.getElementsByTagName('select')].filter(x => x.getAttribute('id') == 'provider_select')[0].value;
+    provider = provider === 'все' ? null : provider;
+
     const params: SearchFormData = {
         city: formData.Город, date_checkin: new Date(formData['Дата заезда']),
-        date_checkout: new Date(formData['Дата выезда']), max_price_per_day: +formData['Макс. цена суток']
+        date_checkout: new Date(formData['Дата выезда']), max_price_per_day: +formData['Макс. цена суток'], filter_by_provider: provider
     };
 
-    const handleSearchResult = (res: Error | Place[]) => {
-        if (res instanceof Error) {
-            console.log(res);
+    const handleSearchResult = (res: Error[] | PlacesResults) => {
+        if (res instanceof Error && Array.isArray(res)) {
+            res.forEach(x => console.log(x));
         } else {
-            renderSearchResultsBlock(res as Place[]);
+            let places: Place[] = [];
+            (res as PlacesResults).forEach(function (value) {
+                places = [...value, ...places];
+            })
+            renderSearchResultsBlock(places);
         }
     }
     search(params, handleSearchResult);
@@ -113,12 +131,6 @@ const providerSearchingConfs = (params: SearchFormData): ProviderConf[] => {
         converter: null
     };
 
-
-    const url = `${API_BOOKING}/places?` +
-        `checkInDate=${dateToUnixStamp(params.date_checkin)}&` +
-        `checkOutDate=${dateToUnixStamp(params.date_checkout)}&` +
-        'coordinates=59.9386,30.3141'
-        + (params.max_price_per_day != 0 ? `&maxPrice=${params.max_price_per_day}` : '');
     // <reference path="api.d.ts" />
     const api2: ProviderConf = {
         name: 'api2',
@@ -148,19 +160,34 @@ const providerSearchingConfs = (params: SearchFormData): ProviderConf[] => {
     return apis;
 }
 
+function search(params: SearchFormData, handleSearchResult: (error: (Error[] | PlacesResults)) =>
+    void): void {
+
+    const resultSearch: Map<ProviderConf, Place[]> = new Map();
+    const errorsLog: Error[] = [];
 
 
-    fetch(url).then(async x => {
-        if (!x.ok) {
-            const reason = await x.text();
-            throw new Error('Ошибка получения search data ' + reason);
+    const getDataAllProviders = async () => {
+        for await (const conf of providerSearchingConfs(params)) {
+            try {
+                const responce = await fetch(conf.url);
+                if (!responce.ok) {
+                    const reason = await responce.text();
+                    throw new Error('Ошибка получения search data ' + reason);
+                }
+                let json: Place[] | Error = await responce.json();
+                if (json instanceof Error) throw json;
+                if (conf.converter != null) json = conf.converter(json);
+                resultSearch.set(conf, json);
+            } catch (err) {
+                errorsLog.push(err as Error);
+            }
         }
 
-        return x.json();
-    }).then((x: Place[] | Error) => {
-        handleSearchResult(x);
-    }).catch(x => {
-        handleSearchResult(x);
+    }
+
+    getDataAllProviders().then(() => {
+        handleSearchResult(resultSearch);
     })
 }
 
@@ -169,7 +196,6 @@ interface SearchFormData {
     city: string,
     date_checkin: Date,
     date_checkout: Date,
-    max_price_per_day: number
     max_price_per_day: number,
     filter_by_provider: null | string
 }
