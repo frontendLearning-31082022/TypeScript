@@ -1,6 +1,6 @@
 import { renderBlock } from './lib.js'
 
-import env from './env.js'
+// import env from './env.js'
 import { Place } from './places.js'
 import { renderSearchResultsBlock } from './search-results.js'
 import { dateToUnixStamp } from './dates-methods.js'
@@ -24,8 +24,9 @@ export function renderSearchFormBlock() {
     window['searchForm_search'] = handleSearchForm;
 
     const reCalc_out = document.createElement('script');
+    // const API_BOOKING='${env.API_BOOKING}';
     reCalc_out.innerHTML = `
-            const API_BOOKING='${env.API_BOOKING}';
+
             function reCalc_out(e){
                 choosedDate=new Date( Date.parse(e.value));
                 const minIncrement = new Date(choosedDate.setDate(choosedDate.getDate() + 2));
@@ -101,8 +102,16 @@ function handleSearchForm(form: HTMLFormElement): void {
     search(params, handleSearchResult);
 }
 
-function search(params: SearchFormData, handleSearchResult: (error: (Error | Place[])) =>
-    void): void {
+const providerSearchingConfs = (params: SearchFormData): ProviderConf[] => {
+    const api1: ProviderConf = {
+        name: 'api1',
+        url: 'http://127.0.0.1:3030/places?' +
+            `checkInDate=${dateToUnixStamp(params.date_checkin)}&` +
+            `checkOutDate=${dateToUnixStamp(params.date_checkout)}&` +
+            'coordinates=59.9386,30.3141'
+            + (params.max_price_per_day != 0 ? `&maxPrice=${params.max_price_per_day}` : ''),
+        converter: null
+    };
 
 
     const url = `${API_BOOKING}/places?` +
@@ -110,6 +119,35 @@ function search(params: SearchFormData, handleSearchResult: (error: (Error | Pla
         `checkOutDate=${dateToUnixStamp(params.date_checkout)}&` +
         'coordinates=59.9386,30.3141'
         + (params.max_price_per_day != 0 ? `&maxPrice=${params.max_price_per_day}` : '');
+    // <reference path="api.d.ts" />
+    const api2: ProviderConf = {
+        name: 'api2',
+        url: 'http://127.0.0.1:3040/places?' +
+            `checkInDate=${dateToUnixStamp(params.date_checkin)}&` +
+            `checkOutDate=${dateToUnixStamp(params.date_checkout)}&` +
+            'coordinates=59.9386,30.3141'
+            + (params.max_price_per_day != 0 ? `&maxPrice=${params.max_price_per_day}` : ''),
+        converter: (place: Api2.Place[]): Place[] => {
+            return place.map(x => {
+                const b: Place & { coordinates: number[] } = {} as Place & { coordinates: number[] };
+                b.bookedDates = x.bookedDates.map(date => date.getTime());
+                b.description = x.details;
+                b.id = x.id;
+                b.image = x.photos.length > 0 ? x.photos[0] : '';
+                b.name = x.title;
+                b.price = x.totalPrice;
+                b.remoteness = x.remoteness;
+                b.coordinates = x.coordinates;
+                return b;
+            });
+        }
+    };
+
+    const apis=[api1, api2]
+    if(params.filter_by_provider!=null)return apis.filter(x=>x.name===params.filter_by_provider);
+    return apis;
+}
+
 
 
     fetch(url).then(async x => {
@@ -132,4 +170,6 @@ interface SearchFormData {
     date_checkin: Date,
     date_checkout: Date,
     max_price_per_day: number
+    max_price_per_day: number,
+    filter_by_provider: null | string
 }
