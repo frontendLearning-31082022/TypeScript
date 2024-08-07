@@ -11,6 +11,7 @@
         "sourceMap": true
     },
     "exclude": [
-        "./api_realestate/*"
+        "./api_realestate/*",
+        "./api_realestate2/*"
     ]
 }

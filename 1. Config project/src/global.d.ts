@@ -8,3 +8,6 @@ interface Window {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [key: string]: any;
 }
+
+type ProviderConf = { name: string, url: string, converter: ((unknown) => Place[]) | null };
+type PlacesResults = Map<ProviderConf, Place[]>;

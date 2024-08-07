@@ -48,7 +48,8 @@ export function renderSearchResultsBlock(places: Place[]) {
                 <p>${place.name}</p>
                 <p class="price">${place.price}&#8381;</p>
               </div>
-              <div class="result-info--map"><i class="map-icon"></i> ${place.remoteness}км от вас</div>
+               ${place.remoteness!=undefined ?
+                '<div class="result-info--map">' + '<i class="map-icon"></i>' + place.remoteness + ' км от вас' + '</div>' : ''}
               <div class="result-info--descr">${place.description}</div>
               <div class="result-info--footer">
                 <div>
