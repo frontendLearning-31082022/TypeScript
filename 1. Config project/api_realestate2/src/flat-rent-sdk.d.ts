@@ -3,8 +3,7 @@ declare class FlatRentSdk {
     search(parameters: { city: string, checkInDate: Date, checkOutDate: Date, priceLimit: number | null }): Flat[];
     book(flatId: string, checkInDate: Date, checkOutDate: Date): number;
 }
-
-type Flat = {
+ type Flat = {
     id: string,
     title: string,
     details: string,

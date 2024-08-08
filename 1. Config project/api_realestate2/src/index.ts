@@ -1,6 +1,6 @@
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
-import { PlaceRestController } from './PlaceRestController';
+import { PlaceRestController } from './controllers/PlaceRestController';
 import { FlatRentSdkStandalone } from './flat-rent-sdk_standalone';
 
 /// <reference types="./types/api_realestate2.d.ts" />

@@ -1,9 +1,9 @@
-/// <reference types="./types/api_realestate2.d.ts" />
+/// <reference types="../types/api_realestate2.d.ts" />
 
 import { Params } from '@feathersjs/feathers';
 import { BadRequest, NotFound } from '@feathersjs/errors';
-import { DateHelper } from './helpers/DateHelper';
-import { Booking } from './repositories/Booking';
+import { DateHelper } from '../helpers/DateHelper';
+import { Booking } from '../repositories/Booking';
 import Joi = require('joi');
 
 export class PlaceRestController {

@@ -1,7 +1,7 @@
 
-import { FlatRentSdk } from "./flat-rent-sdk"
+import { FlatRentSdk } from './flat-rent-sdk'
 
-let databaseStub = [
+const databaseStub = [
     {
         id: 'vnd331',
         title: 'Radisson Royal Hotel',
