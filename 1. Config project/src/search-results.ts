@@ -64,6 +64,7 @@ export function renderSearchResultsBlock(places: Place[]) {
     });
 
 
+    window['handleSortPlaces'] = handleSortPlaces;
     renderBlock(
         'search-results-block',
         `
@@ -71,10 +72,11 @@ export function renderSearchResultsBlock(places: Place[]) {
         <p>Результаты поиска</p>
         <div class="search-results-filter">
             <span><i class="icon icon-filter"></i> Сортировать:</span>
-            <select>
-                <option selected="">Сначала дешёвые</option>
-                <option selected="">Сначала дорогие</option>
-                <option>Сначала ближе</option>
+            <select onchange="handleSortPlaces(event.target)">
+                <option selected="">нет</option>
+                <option >${SortPlacesTypes['Сначала дешёвые']}</option>
+                <option >${SortPlacesTypes['Сначала дорогие']}</option>
+                <option>${SortPlacesTypes['Сначала ближе']}</option>
             </select>
         </div>
     </div>
@@ -83,6 +85,56 @@ export function renderSearchResultsBlock(places: Place[]) {
     );
 
     invalidDataTimer();
+}
+
+function handleSortPlaces(domElem: HTMLSelectElement) {
+
+    const choosed = domElem.getElementsByTagName('option')[domElem.selectedIndex].textContent;
+    type elemsType = { el: HTMLElement, val: string | null }
+
+    const placesClassElement = 'results-list';
+    const placesDomParentID = 'search-results-block';
+    const getElems = (className: string): elemsType[] => {
+        return [...document.getElementsByClassName(placesClassElement)]
+            .map(x => {
+                const nodeVal: HTMLCollectionOf<Element> | null = x.getElementsByClassName(className);
+                const valElem = nodeVal.length == 0 ? null : nodeVal[0].textContent;
+                return { el: x, val: valElem }
+            })
+    };
+
+    const comparator = (a: elemsType, b: elemsType) => {
+        let one = Infinity;
+        let two = Infinity;
+        if (a.val != null) {
+            one = a.val.replaceAll(new RegExp('\\D', 'g'), '');
+        }
+        if (b.val != null) {
+            two = b.val.replaceAll(new RegExp('\\D', 'g'), '');
+        }
+        return one - two;
+    };
+
+    const comparators: SortPlacesTypes = {} as { typePlace: (type: SortPlacesTypes) => elemsType[] };
+    comparators[SortPlacesTypes['Сначала ближе']] = () => {
+        return getElems('result-info--map').sort(comparator);
+    }
+    comparators[SortPlacesTypes['Сначала дешёвые']] = () => {
+        return getElems('price').sort(comparator);
+    }
+    comparators[SortPlacesTypes['Сначала дорогие']] = () => {
+        return getElems('price').sort(comparator).reverse();
+    }
+
+    comparators[choosed]().forEach(x => {
+        document.getElementById(placesDomParentID).appendChild(x.el);
+    })
+
+}
+enum SortPlacesTypes {
+    'Сначала дешёвые' = 'Сначала дешёвые',
+    'Сначала дорогие' = 'Сначала дорогие',
+    'Сначала ближе' = 'Сначала ближе'
 }
 
 function invalidDataTimer() {
@@ -104,7 +156,7 @@ function handleBook(placeId: number | string, provider: string) {
 }
 
 function book(params: BookingParams) {
-    const url = providerBookingConfs().filter(x => x.name==params.provider)[0].bookingUrl(params);
+    const url = providerBookingConfs().filter(x => x.name == params.provider)[0].bookingUrl(params);
 
     fetch(url, {
         method: 'PATCH',
