@@ -53,7 +53,7 @@ export function renderSearchResultsBlock(places: Place[]) {
               <div class="result-info--descr">${place.description}</div>
               <div class="result-info--footer">
                 <div>
-                  <button onclick="handleBook(${place.id})" class="reserve_btn">Забронировать</button>
+                  <button onclick="handleBook('${place.id}','${place.provider}')" class="reserve_btn">Забронировать</button>
                 </div>
               </div>
             </div>
@@ -96,16 +96,15 @@ function invalidDataTimer() {
     }, time);
 }
 
-function handleBook(placeId: number) {
+function handleBook(placeId: number | string, provider: string) {
     const date_checkin = new Date((document.getElementById(SearchBook_formIds.date_checkin) as HTMLInputElement).value);
     const date_checkout = new Date((document.getElementById(SearchBook_formIds.date_checkout) as HTMLInputElement).value);
-    book(placeId, date_checkin, date_checkout);
+
+    book({ date_checkin: date_checkin, date_checkout: date_checkout, id: placeId, provider: provider });
 }
 
-function book(placeId: number, checkInDate: Date, checkOutDate: Date) {
-    const url = `http://localhost:3030/places/${placeId}?` +
-        `checkInDate=${dateToUnixStamp(checkInDate)}&` +
-        `checkOutDate=${dateToUnixStamp(checkOutDate)}&`;
+function book(params: BookingParams) {
+    const url = providerBookingConfs().filter(x => x.name==params.provider)[0].bookingUrl(params);
 
     fetch(url, {
         method: 'PATCH',
@@ -117,4 +116,38 @@ function book(placeId: number, checkInDate: Date, checkOutDate: Date) {
         renderToast({ text: 'Невозможно забронировать место', type: 'error' });
     });
 
+}
+
+const providerBookingConfs = (): ProviderConf[] => {
+    const api1: ProviderConf = {
+        name: 'api1',
+        url: '',
+        converter: null,
+        bookingUrl: (params: BookingParams) => {
+            return `http://localhost:3030/places/${params.id}?` +
+                `checkInDate=${dateToUnixStamp(params.date_checkin)}&` +
+                `checkOutDate=${dateToUnixStamp(params.date_checkout)}`;
+        }
+    };
+
+    const api2: ProviderConf = {
+        name: 'api2',
+        url: '',
+        converter: null,
+        bookingUrl: (params: BookingParams) => {
+            return `${'http://localhost:3040'}/places/${params.id}?` +
+                `checkInDate=${dateToUnixStamp(params.date_checkin)}&` +
+                `checkOutDate=${dateToUnixStamp(params.date_checkout)}&`;
+        }
+    };
+
+    const apis = [api1, api2]
+    return apis;
+}
+
+type BookingParams = {
+    date_checkin: Date,
+    date_checkout: Date,
+    id: string | number,
+    provider: null | string
 }

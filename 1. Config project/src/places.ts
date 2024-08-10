@@ -6,4 +6,5 @@ export interface Place {
     remoteness: number;
     bookedDates: number[];
     price: number;
+    provider:string;
 }
