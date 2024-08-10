@@ -69,7 +69,7 @@ export function renderSearchFormBlock() {
           <div>
           <div class="provider_filter">
             <span> Поставщик:</span>
-            <select id="provider_select">
+            <select id="${SearchBook_formIds.provider_select}">
                 <option selected>все</option>
                 ${providerSearchingConfs({ city: '', date_checkin: new Date(), date_checkout: new Date(), max_price_per_day: 0 })
             .map(x => '<option>' + x.name + '</option>').join('\r\n')}
@@ -155,8 +155,8 @@ const providerSearchingConfs = (params: SearchFormData): ProviderConf[] => {
         }
     };
 
-    const apis=[api1, api2]
-    if(params.filter_by_provider!=null)return apis.filter(x=>x.name===params.filter_by_provider);
+    const apis = [api1, api2]
+    if (params.filter_by_provider != null) return apis.filter(x => x.name === params.filter_by_provider);
     return apis;
 }
 
@@ -178,6 +178,7 @@ function search(params: SearchFormData, handleSearchResult: (error: (Error[] | P
                 let json: Place[] | Error = await responce.json();
                 if (json instanceof Error) throw json;
                 if (conf.converter != null) json = conf.converter(json);
+                json.forEach(x => x.provider = conf.name);
                 resultSearch.set(conf, json);
             } catch (err) {
                 errorsLog.push(err as Error);
