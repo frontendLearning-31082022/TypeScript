@@ -71,7 +71,7 @@ export function renderSearchFormBlock() {
             <span> Поставщик:</span>
             <select id="${SearchBook_formIds.provider_select}">
                 <option selected>все</option>
-                ${providerSearchingConfs({ city: '', date_checkin: new Date(), date_checkout: new Date(), max_price_per_day: 0 })
+                ${providerSearchingConfs({ city: '', date_checkin: new Date(), date_checkout: new Date(), max_price_per_day: 0 } as SearchFormData)
             .map(x => '<option>' + x.name + '</option>').join('\r\n')}
             </select>
           </div>
@@ -98,7 +98,7 @@ function handleSearchForm(form: HTMLFormElement): void {
         formData[field] = x.value;
     });
 
-    let provider = [...form.getElementsByTagName('select')].filter(x => x.getAttribute('id') == 'provider_select')[0].value;
+    let provider: string | null = [...form.getElementsByTagName('select')].filter(x => x.getAttribute('id') == 'provider_select')[0].value;
     provider = provider === 'все' ? null : provider;
 
     const params: SearchFormData = {
@@ -128,7 +128,8 @@ const providerSearchingConfs = (params: SearchFormData): ProviderConf[] => {
             `checkOutDate=${dateToUnixStamp(params.date_checkout)}&` +
             'coordinates=59.9386,30.3141'
             + (params.max_price_per_day != 0 ? `&maxPrice=${params.max_price_per_day}` : ''),
-        converter: null
+        converter: null,
+        bookingUrl: null
     };
 
     // <reference path="api.d.ts" />
@@ -152,7 +153,8 @@ const providerSearchingConfs = (params: SearchFormData): ProviderConf[] => {
                 b.coordinates = x.coordinates;
                 return b;
             });
-        }
+        },
+        bookingUrl: null
     };
 
     const apis = [api1, api2]

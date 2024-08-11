@@ -9,5 +9,5 @@ interface Window {
     [key: string]: any;
 }
 
-type ProviderConf = { name: string, url: string, converter: ((unknown) => Place[]) | null ,bookingUrl:(params: BookingParams)=> string};
+type ProviderConf = { name: string, url: string, converter: ((unknown) => Place[]) | null ,bookingUrl:((params: BookingParams)=> string) | null};
 type PlacesResults = Map<ProviderConf, Place[]>;

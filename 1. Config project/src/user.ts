@@ -71,7 +71,7 @@ export function addToFavorite(like_element: HTMLElement, element: LocalStorage_l
     localStorage.setItem(localstore_favorite_key, json);
 }
 
-export function getFavoritesList(): Map<number, LocalStorage_liked_booking> {
+export function getFavoritesList(): Map<number | string, LocalStorage_liked_booking> {
     const strFavKey: (string | null) = localStorage.getItem(localstore_favorite_key);
     if (strFavKey == null) return new Map();
 

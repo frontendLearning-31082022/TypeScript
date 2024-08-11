@@ -90,7 +90,9 @@ export function renderSearchResultsBlock(places: Place[]) {
 function handleSortPlaces(domElem: HTMLSelectElement) {
 
     const choosed = domElem.getElementsByTagName('option')[domElem.selectedIndex].textContent;
-    type elemsType = { el: HTMLElement, val: string | null }
+    if (choosed == null) return;
+
+    type elemsType = { el: HTMLElement | null, val: string | null }
 
     const placesClassElement = 'results-list';
     const placesDomParentID = 'search-results-block';
@@ -99,7 +101,7 @@ function handleSortPlaces(domElem: HTMLSelectElement) {
             .map(x => {
                 const nodeVal: HTMLCollectionOf<Element> | null = x.getElementsByClassName(className);
                 const valElem = nodeVal.length == 0 ? null : nodeVal[0].textContent;
-                return { el: x, val: valElem }
+                return ({ el: x, val: valElem } as elemsType)
             })
     };
 
@@ -107,15 +109,16 @@ function handleSortPlaces(domElem: HTMLSelectElement) {
         let one = Infinity;
         let two = Infinity;
         if (a.val != null) {
-            one = a.val.replaceAll(new RegExp('\\D', 'g'), '');
+            one = Number.parseInt(a.val.replaceAll(new RegExp('\\D', 'g'), ''));
         }
         if (b.val != null) {
-            two = b.val.replaceAll(new RegExp('\\D', 'g'), '');
+            two = Number.parseInt(b.val.replaceAll(new RegExp('\\D', 'g'), ''));
         }
         return one - two;
     };
 
-    const comparators: SortPlacesTypes = {} as { typePlace: (type: SortPlacesTypes) => elemsType[] };
+
+    const comparators = {} as Record<SortPlacesTypes, () => elemsType[]>;
     comparators[SortPlacesTypes['Сначала ближе']] = () => {
         return getElems('result-info--map').sort(comparator);
     }
@@ -126,8 +129,15 @@ function handleSortPlaces(domElem: HTMLSelectElement) {
         return getElems('price').sort(comparator).reverse();
     }
 
-    comparators[choosed]().forEach(x => {
-        document.getElementById(placesDomParentID).appendChild(x.el);
+    const index: number = Object.keys(SortPlacesTypes).indexOf(choosed);
+    const enumVal: SortPlacesTypes = SortPlacesTypes[Object.keys(SortPlacesTypes)[index] as SortPlacesTypes];
+
+    comparators[enumVal]().forEach(x => {
+        const parentPlaces = document.getElementById(placesDomParentID);
+        if (parentPlaces == null) return;
+        if (x.el == null) return;
+
+        parentPlaces.appendChild(x.el);
     })
 
 }
@@ -156,7 +166,7 @@ function handleBook(placeId: number | string, provider: string) {
 }
 
 function book(params: BookingParams) {
-    const url = providerBookingConfs().filter(x => x.name == params.provider)[0].bookingUrl(params);
+    const url = providerBookingConfs().filter(x => x.name == params.provider)[0].bookingUrl!(params);
 
     fetch(url, {
         method: 'PATCH',
