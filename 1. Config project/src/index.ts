@@ -19,13 +19,12 @@ function findSuitableBook(genre: string, pagesLimit: number, multipleRecommendat
 }
 
 const recommendedBook = findSuitableBook('fantasy', 1000)
-
-if (recommendedBook instanceof Book) {
-    console.log(recommendedBook.name)
-} if (Array.isArray(recommendedBook)) {
-    console.log(recommendedBook[0].name)
-} if (recommendedBook === undefined) {
+if (recommendedBook === undefined) {
     console.log('no_reconended book');
+} else if (recommendedBook instanceof Book) {
+    console.log(recommendedBook.name)
+} else if (Array.isArray(recommendedBook)) {
+    if (recommendedBook.length > 0 && recommendedBook[0] != undefined) console.log(recommendedBook[0].name);
 }
 
 window.addEventListener('DOMContentLoaded', () => {

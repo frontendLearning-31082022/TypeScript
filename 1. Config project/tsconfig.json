@@ -1,4 +1,5 @@
 {
+    "extends": "./tsconfig-checks.json",
     "compilerOptions": {
         "target": "es2021",
         "module": "es2015",
@@ -6,9 +7,8 @@
         "allowJs": true,
         "outDir": "./public/build",
         "forceConsistentCasingInFileNames": true,
-        "strict": true,
         "skipLibCheck": true,
-        "sourceMap": true
+        "sourceMap": true,
     },
     "exclude": [
         "./api_realestate/*",

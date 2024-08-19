@@ -93,13 +93,19 @@ function handleSearchForm(form: HTMLFormElement): void {
     const inputs = ([...form] as HTMLInputElement[]).filter(x => x.tagName == 'INPUT' && x.type != 'hidden');
     const formData: formFields = {} as formFields;
     inputs.filter(x => x.tagName == 'INPUT').forEach(x => {
-        const field: P = (x.labels![0].textContent! as P);
+        if(x.labels===undefined || x.labels==null)return;
+        if(x.labels.length==0)return;
+        if(x.labels[0]===undefined)return;
+
+        const field: P = (x.labels[0].textContent! as P);
         // @ts-expect-error "wtf"
         formData[field] = x.value;
     });
 
-    let provider: string | null = [...form.getElementsByTagName('select')].filter(x => x.getAttribute('id') == 'provider_select')[0].value;
+    // let provider: string | null = [...form.getElementsByTagName('select')].filter(x => x.getAttribute('id') == 'provider_select')[0].value;
+    let provider: string | undefined | null = [...form.getElementsByTagName('select')].filter(x => x.getAttribute('id') == 'provider_select')[0]?.value;
     provider = provider === 'все' ? null : provider;
+    provider = provider === undefined ? null : provider;
 
     const params: SearchFormData = {
         city: formData.Город, date_checkin: new Date(formData['Дата заезда']),

@@ -89,8 +89,8 @@ export function renderSearchResultsBlock(places: Place[]) {
 
 function handleSortPlaces(domElem: HTMLSelectElement) {
 
-    const choosed = domElem.getElementsByTagName('option')[domElem.selectedIndex].textContent;
-    if (choosed == null) return;
+    const choosed = domElem.getElementsByTagName('option')[domElem.selectedIndex]?.textContent;
+    if (choosed == undefined) return;
 
     type elemsType = { el: HTMLElement | null, val: string | null }
 
@@ -99,8 +99,8 @@ function handleSortPlaces(domElem: HTMLSelectElement) {
     const getElems = (className: string): elemsType[] => {
         return [...document.getElementsByClassName(placesClassElement)]
             .map(x => {
-                const nodeVal: HTMLCollectionOf<Element> | null = x.getElementsByClassName(className);
-                const valElem = nodeVal.length == 0 ? null : nodeVal[0].textContent;
+                const nodeVal: HTMLCollectionOf<Element> | undefined = x.getElementsByClassName(className);
+                const valElem = nodeVal.length == 0 ? null : nodeVal[0]!.textContent;
                 return ({ el: x, val: valElem } as elemsType)
             })
     };
@@ -166,7 +166,11 @@ function handleBook(placeId: number | string, provider: string) {
 }
 
 function book(params: BookingParams) {
-    const url = providerBookingConfs().filter(x => x.name == params.provider)[0].bookingUrl!(params);
+    const url = providerBookingConfs().filter(x => x.name == params.provider)[0]?.bookingUrl!(params);
+    if(url==undefined){
+        console.log('error');
+        return;
+    }
 
     fetch(url, {
         method: 'PATCH',
